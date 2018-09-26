@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bbsstep.dao.CarouselBeanMapper" >
+  
+  <sql id="selectColumn">
+  	id, title, path, weight, user_id, createtime, edittime, ischoose, type
+  </sql>
+  
+  <select id="selectNumByParam" resultType="java.lang.Integer" parameterType="com.bbsstep.util.DataTablePageUtil">
+    select count(*)
+    from t_carousel
+    <where>
+    	<if test="condition.type != null">
+    		type=#{condition.type}
+    	</if>
+    	<if test="search != null">
+    		and ( title like CONCAT('%',#{search}, '%') or weight like  CONCAT('%',#{search}, '%')
+    		)
+    	</if>
+    </where>
+  </select>
+  
+  <!-- 条件查询 -->
+  <select id="selectByParam" resultType="com.bbsstep.po.CarouselBean" parameterType="com.bbsstep.util.DataTablePageUtil">
+    select 
+       <include refid="selectColumn"/>
+    from t_carousel
+    <where>
+    	<if test="condition.type != null">
+    		type=#{condition.type}
+    	</if>
+    	<if test="search != null">
+    		and ( title like CONCAT('%',#{search}, '%') or weight like  CONCAT('%',#{search}, '%')
+    		)
+    	</if>
+    </where>
+    order by createtime desc
+    limit #{start},#{length}
+  </select>
+    <insert id="insert" parameterType="com.bbsstep.po.CarouselBean" >
+    insert into t_carousel (id, title, path, 
+      weight, user_id, createtime, 
+      edittime, ischoose, type
+      )
+    values (#{id,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{path,jdbcType=VARCHAR}, 
+      #{weight,jdbcType=INTEGER}, #{userId,jdbcType=BIGINT}, #{createtime}, 
+      #{edittime}, #{ischoose,jdbcType=CHAR}, #{type,jdbcType=CHAR}
+      )
+  </insert>
+  
+</mapper>
